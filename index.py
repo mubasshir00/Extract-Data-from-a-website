@@ -1,39 +1,16 @@
-# import requests
-# from bs4 import BeautifulSoup
 
-# base_url = "https://roar.media/bangla/main/science"
-
-# page = requests.get('https://roar.media/bangla/main/science')
-
-# soup = BeautifulSoup(page.content, 'html.parser')
-
-# all_links = []
-
-# links = soup.select('a')
-
-# for link in links:
-#     print(link)
-#     text = link.get_text()
-#     text = text.strip()
-#     href = link.get('href')
-#     href = href.strip()
-#     links.append(href)
-
-    # if href.find(base_url) != -1:
-    #     print(href)
-    #     all_links.append(href)
-
-# for h in all_links:
-#     print(h)
 
 from bs4 import BeautifulSoup
 import requests
 import json
+# import nltk
+# nltk.download('words')
+# words = set(nltk.corpus.words.words())
 
 
 url = "https://roar.media/bangla/main/science"
 
-base_url = "https://roar.media/bangla/main/science/"
+base_url = "https://roar.media/bangla/main/science"
 
 html_content = requests.get(url).text
 
@@ -52,24 +29,41 @@ for i in range(0,1):
 
 formated_text = []
 
+title = ""
+author = ""
+content = ""
+arti=""
+
 for link in all_links:
     if link.find(base_url) != -1:
         html_content_art = requests.get(link).text
 
         soup_art = BeautifulSoup(html_content_art, "html.parser")
 
-        title = soup_art.find("h1", class_="entry-title").get_text()
-        author = soup_art.find("a", class_="post-author").get_text()
-        arti = soup_art.find_all('postcontentroarcheck')
-        print(author)
+        check_head = soup_art.find("h1", class_="entry-title")
+        if check_head is not None:
+            title = soup_art.find("h1", class_="entry-title").get_text()
+
+        check_author = soup_art.find("a", class_="post-author")
+        if check_author is not None:
+            author = soup_art.find("a", class_="post-author").get_text()
+
+        check_article_exists = soup_art.find('postcontentroarcheck')
+        if check_article_exists is not None:
+                arti = soup_art.find('postcontentroarcheck')
+                # arti = soup_art.find_next_siblings(p)
+                content = arti.get_text().strip()
+               
 
         for art in arti:
             # print(art.get_text().strip())
             formated_text.append({
+                "Title": title,
                 "Author":author,
+                "Category" : "Science",
                 "Source": link,
-                "Content": art.get_text().strip()
+                "Content": content
             })
         
-        with open('test.txt', 'w') as f:
+        with open('science.txt', 'w') as f:
             f.write(str(formated_text))
