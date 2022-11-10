@@ -45,9 +45,10 @@ p = soup.find_all('a')
 
 all_links = []
 
-for tag in p:
-    # print(tag.get('href'))
-    all_links.append(tag.get('href'))
+for i in range(0,1):
+    for tag in p:
+        # print(tag.get('href'))
+        all_links.append(tag.get('href'))
 
 formated_text = []
 
@@ -57,13 +58,17 @@ for link in all_links:
 
         soup_art = BeautifulSoup(html_content_art, "html.parser")
 
+        title = soup_art.find("h1", class_="entry-title").get_text()
+        author = soup_art.find("a", class_="post-author").get_text()
         arti = soup_art.find_all('postcontentroarcheck')
-        
+        print(author)
 
         for art in arti:
             # print(art.get_text().strip())
             formated_text.append({
-                "article": art.get_text().strip()
+                "Author":author,
+                "Source": link,
+                "Content": art.get_text().strip()
             })
         
         with open('test.txt', 'w') as f:
